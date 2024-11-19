@@ -1,0 +1,44 @@
+{
+    "archetype": "form-view",
+    "imports": {
+      "dependencies": [
+        {
+          "name": "react-query",
+          "exports": ["useQuery"]
+        }
+      ],
+      "components": [
+        {
+          "name": "DepartmentSelect",
+          "type": "departmentSelect"
+        }
+      ]
+    },
+    "config": {
+      "title": "Employee Settings",
+      "description": "Manage employee settings",
+      "formFields": [
+        {
+        "type": "textbox",
+        "name": "name",
+        "label": "Employee Name"
+        },
+        {
+          "type": "departmentSelect",
+          "name": "department",
+          "label": "Department"
+        }
+      ],
+      "buttons": [
+        {
+          "type": "button",
+          "label": "Save",
+          "action": "submit"
+        }
+      ],
+      "api": {
+        "fetch": "/api/employee-settings"
+      }
+    }
+  }
+  

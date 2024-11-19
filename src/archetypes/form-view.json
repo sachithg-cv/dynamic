@@ -1,0 +1,23 @@
+{
+    "name": "form-view",
+    "layout": {
+      "type": "form",
+      "sections": [
+        {
+          "type": "section",
+          "id": "header",
+          "components": ["title", "description"]
+        },
+        {
+          "type": "section",
+          "id": "content",
+          "components": ["formFields"]
+        },
+        {
+          "type": "section",
+          "id": "actions",
+          "components": ["buttons"]
+        }
+      ]
+    }
+  }
