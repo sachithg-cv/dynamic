@@ -1,4 +1,5 @@
 // src/types/types.ts
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export interface ComponentImport {
     name: string;
     type: string;

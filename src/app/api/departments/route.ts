@@ -12,6 +12,7 @@ export async function GET() {
     
     return NextResponse.json(departments)
   } catch (error) {
+    console.error('Failed to fetch departments:', error);
     return NextResponse.json(
       { error: 'Failed to fetch departments' },
       { status: 500 }

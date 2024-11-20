@@ -8,7 +8,7 @@ interface PageProps {
 }
 
 // get the template name from the params
-export default async function TemplatePage({ params }: PageProps) {
+export default async function TemplatePage({ params }: Readonly<PageProps>) {
   // Await the params object
   const resolvedParams = await params
 
@@ -47,7 +47,7 @@ export async function generateMetadata({ params }: PageProps) {
     const templateData = await templateLoader.loadTemplate(resolvedParams.template)
     return {
       title: templateData.config.title || 'Template Page',
-      description: templateData.config.description || 'Dynamic template page'
+      description: templateData.config.description ?? 'Dynamic template page'
     }
   } catch {
     return {

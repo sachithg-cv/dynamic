@@ -8,7 +8,7 @@ export default function DepartmentSelect({
   label,
   value = '',
   onChange
-}: ComponentProps) {
+}: Readonly<ComponentProps>) {
   const { data: departments = [], isLoading } = useQuery({
     queryKey: ['departments'],
     queryFn: async () => {

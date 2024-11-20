@@ -10,6 +10,7 @@ export async function GET() {
     
     return NextResponse.json(settings)
   } catch (error) {
+    console.error('Error fetching settings:', error)
     return NextResponse.json(
       { error: 'Failed to fetch employee settings' },
       { status: 500 }

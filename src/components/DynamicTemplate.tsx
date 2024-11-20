@@ -1,15 +1,13 @@
 // src/components/DynamicTemplate.tsx
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import dynamic from 'next/dynamic'
 import type { 
-  DynamicTemplateProps, 
-  ComponentProps, 
+  DynamicTemplateProps,  
   FieldConfig,
   Section,
-  FieldType
 } from '@/types/types'
 
 // Dynamic imports for components
@@ -26,7 +24,7 @@ export function DynamicTemplate({
   initialTemplate,
   initialArchetype,
   initialData = {}
-}: DynamicTemplateProps) {
+}: Readonly<DynamicTemplateProps>) {
   const [formData, setFormData] = useState<Record<string, any>>(initialData)
 
   const { data: templateData = {} } = useQuery({
