@@ -1,7 +1,6 @@
-// src/components/DynamicTemplate.tsx
 'use client'
 
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import dynamic from 'next/dynamic'
 import type { 
@@ -10,14 +9,13 @@ import type {
   Section,
 } from '@/types/types'
 
-// Dynamic imports for components
-const TextBox = dynamic(() => import('./common/TextBox'))
-const DepartmentSelect = dynamic(() => import('./employee/DepartmentSelect'))
+// Define component paths map with absolute imports
+const COMPONENT_PATHS = {
+  textbox: () => import('@/components/common/TextBox'),
+  departmentSelect: () => import('@/components/employee/DepartmentSelect')
+} as const
 
-const componentRegistry = {
-  textbox: TextBox,
-  departmentSelect: DepartmentSelect
-}
+type ComponentKey = keyof typeof COMPONENT_PATHS
 
 export function DynamicTemplate({ 
   templateName,
@@ -26,6 +24,33 @@ export function DynamicTemplate({
   initialData = {}
 }: Readonly<DynamicTemplateProps>) {
   const [formData, setFormData] = useState<Record<string, any>>(initialData)
+
+  // Get unique component types from template
+  const requiredComponents = useMemo(() => {
+    const componentTypes = new Set<ComponentKey>()
+    
+    initialTemplate.config.formFields.forEach(field => {
+      if (field.type in COMPONENT_PATHS) {
+        componentTypes.add(field.type as ComponentKey)
+      }
+    })
+    
+    return Array.from(componentTypes)
+  }, [initialTemplate.config.formFields])
+
+  // Dynamically import only required components
+  const componentRegistry = useMemo(() => {
+    const registry: Record<string, React.ComponentType<any>> = {}
+    
+    requiredComponents.forEach(componentType => {
+      registry[componentType] = dynamic(COMPONENT_PATHS[componentType], {
+        loading: () => <div className="animate-pulse h-10 bg-gray-100 rounded" />,
+        ssr: false
+      })
+    })
+    
+    return registry
+  }, [requiredComponents])
 
   const { data: templateData = {} } = useQuery({
     queryKey: ['templateData', templateName],
@@ -64,16 +89,21 @@ export function DynamicTemplate({
   )
 
   const renderField = (fieldConfig: FieldConfig, index: number) => {
-    const Component = componentRegistry[fieldConfig.type as keyof typeof componentRegistry]
+    const Component = componentRegistry[fieldConfig.type]
     
-    return Component ? (
+    if (!Component) {
+      console.warn(`Component type "${fieldConfig.type}" is not registered`)
+      return null
+    }
+    
+    return (
       <Component
         key={`${fieldConfig.name}-${index}`}
         {...fieldConfig}
         value={formData[fieldConfig.name] ?? templateData[fieldConfig.name] ?? ''}
         onChange={(value: any) => handleFieldChange(fieldConfig.name, value)}
       />
-    ) : null
+    )
   }
 
   const renderContentSection = () => (
